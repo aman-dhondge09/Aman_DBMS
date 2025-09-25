@@ -1,0 +1,273 @@
+ 
+
+code: 
+
+declare  
+
+r number; 
+
+bn varchar(20); 
+
+isdate date; 
+
+rdate date; 
+
+d int; 
+
+amt float(10); 
+
+begin 
+
+r:=&r; 
+
+bn:='&bn'; 
+
+rdate:=sysdate; 
+
+select issuedate into isdate from borrower where rollno=r and bookname=bn and status='i'; 
+
+d:=rdate-isdate; 
+
+dbms_output.put_line('no of days: '|| d); 
+
+if d<15 then 
+
+dbms_output.put_line('No Fine'); 
+
+update borrower  set status='r' where rollno=r and bookname=bn; 
+
+elsif d>15 and d<30 then 
+
+amt:=d*5; 
+
+update borrower set status='r' where rollno= r and bookname=bn; 
+
+elsif d>30 then  
+
+amt:=d*50; 
+
+update borrower set status='r' where rollno=r and bookname=bn; 
+
+else  
+
+dbms_output.put_line('no record found '); 
+
+end if; 
+
+if amt>0 then  
+
+insert into fine values (r, rdate, d,amt); 
+
+end if; 
+
+Exception 
+
+when no_data_found then  
+
+dbms_output.put_line('record not match for the table '); 
+
+end; 
+
+Enter user-name: system 
+
+Enter password: 
+
+Last Successful login time: Sun Sep 21 2025 15:05:40 +05:30 
+
+ 
+
+Connected to: 
+
+Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production 
+
+Version 21.3.0.0.0 
+
+ 
+
+SQL>  create table borrower (rollno int,name varchar(20),bookname varchar(10),issuedate date,status varchar(1)); 
+
+ create table borrower (rollno int,name varchar(20),bookname varchar(10),issuedate date,status varchar(1)) 
+
+               
+
+SQL> desc borrower; 
+
+ Name                                      Null?    Type 
+
+ ----------------------------------------- -------- ---------------------------- 
+
+ ROLLNO                                             NUMBER(38) 
+
+ NAME                                               VARCHAR2(50) 
+
+ BOOKNAME                                           VARCHAR2(10) 
+
+ ISSUEDATE                                          DATE 
+
+ STATUS                                             VARCHAR2(1) 
+
+ 
+
+SQL> create table fine (rollno int,returndate date, days int,amout float); 
+
+ 
+
+Table created. 
+
+ 
+
+SQL> desc fine; 
+
+ Name                                      Null?    Type 
+
+ ----------------------------------------- -------- ---------------------------- 
+
+ ROLLNO                                             NUMBER(38) 
+
+ RETURNDATE                                         DATE 
+
+ DAYS                                               NUMBER(38) 
+
+ AMOUT                                              FLOAT(126) 
+
+ 
+
+SQL> insert into borrower values (101,Aman ,DSA ,'20-june -2025','i'); 
+
+ 
+
+1 row created. 
+
+SQL> insert into borrower values (102,Saroj ,'python','2-march -2025','i'); 
+
+ 
+
+1 row created. 
+
+ 
+
+SQL> insert into borrower values (103,Arjun ,'c++','20-sep -2025','i'); 
+
+ 
+
+1 row created. 
+
+SQL> insert into borrower values (104,Chaitanya ,Java ,21 -sep-2025','i'); 
+
+ 
+
+1 row created. 
+
+ 
+
+SQL> insert into borrower values (105,Abhishek ,'my book','16-sep-2025','i'); 
+
+ 
+
+1 row created. 
+
+ 
+
+SQL> select * from borrower; 
+
+ 
+
+    ROLLNO NAME                 BOOKNAME   ISSUEDATE S 
+
+---------- -------------------- ---------- --------- - 
+
+       101 Aman                DSA  20-June-2025 i 
+
+       102 Saroj         python     2-march -2025 i 
+
+       103 Karan              c  ++        20-sep-2025 i 
+
+       104 Chaitanya              Java    21-sep-2025 i 
+
+       105 Abhishek         my book    16-sep-2025 i 
+
+SQL> set serveroutput on 
+
+SQL> @C:\sql\pr4.sql 
+
+Enter value for r: 102 
+
+old   9: r:=&r; 
+
+new   9: r:=102; 
+
+Enter value for bn: python 
+
+old  10: bn:='&bn'; 
+
+new  10: bn:='python'; 
+
+no of days: 51 
+
+ 
+
+PL/SQL procedure successfully completed. 
+
+ 
+
+SQL> @C:\sql\pr4.sql 
+
+Enter value for r: 105 
+
+old   9: r:=&r; 
+
+new   9: r:=105; 
+
+Enter value for bn: my book 
+
+old  10: bn:='&bn'; 
+
+new  10: bn:='my book'; 
+
+no of days: 6 
+
+No Fine 
+
+SQL> @C:\sql\pr4.sql 
+
+Enter value for r: 101 
+
+old   9: r:=&r; 
+
+new   9: r:=101; 
+
+Enter value for bn: DSA 
+
+old  10: bn:='&bn'; 
+
+new  10: bn:=DSA; 
+
+no of days: 57 
+
+ 
+
+PL/SQL procedure successfully completed. 
+
+SQL> select *from borrower; 
+
+ 
+
+        ROLLNO NAME                 BOOKNAME   ISSUEDATE S 
+
+---------- -------------------- ---------- --------- - 
+
+       101 Aman                DSA  20-June-2025 r 
+
+       102 Saroj         python     2-march -2025 r 
+
+       103 Karan              c  ++        20-sep-2025 i 
+
+       104 Chaitanya              Java    21-sep-2025 i 
+
+       105 Abhishek         my book    16-sep-2025 r 
+
+ 
+
+ 
+
+ 
